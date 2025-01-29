@@ -4,15 +4,24 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.example.newnavigationcomposeexample.ui.Item
+import com.example.newnavigationcomposeexample.ui.screens.DetailsScreen
+import com.example.newnavigationcomposeexample.ui.screens.HomeScreen
+import com.example.newnavigationcomposeexample.ui.screens.ItemNavType
 import com.example.newnavigationcomposeexample.ui.theme.NewNavigationComposeExampleTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.Serializable
+import kotlin.reflect.typeOf
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -22,28 +31,32 @@ class MainActivity : ComponentActivity() {
         setContent {
             NewNavigationComposeExampleTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    AppNavHost(innerPadding)
                 }
             }
         }
     }
 }
-
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+fun AppNavHost(innerPadding: PaddingValues) {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = Home, modifier = Modifier.padding(innerPadding)) {
+        composable<Home>{
+            HomeScreen(onItemSelected = { item ->
+                navController.navigate(Detail(item))
+                // Home screen content
+            })
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NewNavigationComposeExampleTheme {
-        Greeting("Android")
+        }
+        composable<Detail>(typeMap = mapOf( typeOf<Item>() to ItemNavType)) { backStackEntry ->
+            // Details screen content
+            val item = backStackEntry.toRoute<Detail>()
+            DetailsScreen(item.item)
+        }
     }
 }
+@Serializable
+data object Home
+
+@Serializable
+data class Detail (val item: Item)

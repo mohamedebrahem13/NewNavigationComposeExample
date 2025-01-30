@@ -16,18 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.newnavigationcomposeexample.common.getItemList
 import com.example.newnavigationcomposeexample.ui.Item
 
 @Composable
 fun HomeScreen(onItemSelected: (Item) -> Unit) {
-    val items = listOf(
-        Item(1, "Item 1"),
-        Item(2, "Item 2"),
-        Item(3, "Item 3"),
-        Item(4, "Item 4"),
-        Item(5, "Item 5")
-    )
-
+   val items = getItemList()
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text(
             text = "Select an Item",

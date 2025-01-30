@@ -13,15 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
-import com.example.newnavigationcomposeexample.ui.Item
+import com.example.newnavigationcomposeexample.common.getItemById
 import com.example.newnavigationcomposeexample.ui.screens.DetailsScreen
 import com.example.newnavigationcomposeexample.ui.screens.HomeScreen
-import com.example.newnavigationcomposeexample.ui.screens.ItemNavType
 import com.example.newnavigationcomposeexample.ui.theme.NewNavigationComposeExampleTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.Serializable
-import kotlin.reflect.typeOf
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -43,14 +42,19 @@ fun AppNavHost(innerPadding: PaddingValues) {
     NavHost(navController = navController, startDestination = Home, modifier = Modifier.padding(innerPadding)) {
         composable<Home>{
             HomeScreen(onItemSelected = { item ->
-                navController.navigate(Detail(item))
+                navController.navigate(Detail(item.id))
             })
 
         }
-        composable<Detail>(typeMap = mapOf(typeOf<Item>() to ItemNavType)) { backStackEntry ->
+        composable<Detail>(deepLinks = listOf(navDeepLink <Detail>(basePath = "https://newnav.com"))
+        ) { backStackEntry ->
             // Details screen content
             val item = backStackEntry.toRoute<Detail>()
-            DetailsScreen(item.item)
+            val fetchedItem = getItemById(item.item)
+
+            if (fetchedItem != null) {
+                DetailsScreen(fetchedItem)
+            }
         }
     }
 }
@@ -59,4 +63,4 @@ fun AppNavHost(innerPadding: PaddingValues) {
 data object Home
 
 @Serializable
-data class Detail (val item: Item)
+data class Detail (val item: Int)

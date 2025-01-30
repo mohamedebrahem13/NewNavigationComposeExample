@@ -44,17 +44,17 @@ fun AppNavHost(innerPadding: PaddingValues) {
         composable<Home>{
             HomeScreen(onItemSelected = { item ->
                 navController.navigate(Detail(item))
-                // Home screen content
             })
 
         }
-        composable<Detail>(typeMap = mapOf( typeOf<Item>() to ItemNavType)) { backStackEntry ->
+        composable<Detail>(typeMap = mapOf(typeOf<Item>() to ItemNavType)) { backStackEntry ->
             // Details screen content
             val item = backStackEntry.toRoute<Detail>()
             DetailsScreen(item.item)
         }
     }
 }
+
 @Serializable
 data object Home
 

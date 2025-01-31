@@ -1,6 +1,7 @@
 package com.example.newnavigationcomposeexample
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -46,12 +47,14 @@ fun AppNavHost(innerPadding: PaddingValues) {
             })
 
         }
-        composable<Detail>(deepLinks = listOf(navDeepLink <Detail>(basePath = "https://newnav.com"))
+        composable<Detail>(deepLinks = listOf(navDeepLink <Detail>(basePath = "https://newnav.com/detail") )
         ) { backStackEntry ->
             // Details screen content
             val item = backStackEntry.toRoute<Detail>()
-            val fetchedItem = getItemById(item.item)
+            Log.v("item", "Item: $item")
 
+            val fetchedItem = getItemById(item.item)
+            Log.v("item", "Item: $fetchedItem")
             if (fetchedItem != null) {
                 DetailsScreen(fetchedItem)
             }
@@ -63,4 +66,4 @@ fun AppNavHost(innerPadding: PaddingValues) {
 data object Home
 
 @Serializable
-data class Detail (val item: Int)
+data class Detail(val item: Int)
